@@ -9,10 +9,27 @@ Usage
 =====
 
 ```sh
+# Build doin.so (does not need root)
 make
+
+# Now as "root":
 PID=$(docker inspect --format='{{.State.Pid}}' my-minimal-container)
 LD_PRELOAD=$(pwd)/doin.so __DOIN_ATTACH_PID=${PID} tree /
 ```
+
+doin vs. …
+==========
+
+Infilter
+--------
+
+[Infilter](https://github.com/yadutaf/infilter) uses the
+[ptrace()](http://linux.die.net/man/2/ptrace) system call to be notified when
+the program makes it first system calls, and modify CPU registers directly
+to inject calls to the `setns()` system call. On the other hand, `doin` works
+independently of the platform, as it does not access hardware features
+directly.
+
 
 How does it work?
 =================
