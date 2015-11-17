@@ -83,6 +83,16 @@ int __libc_start_main(int (*main) (int, char**, char**),
          */
         int fd = open (path, O_RDONLY);
         if (fd < 0) {
+            if (errno == ENOENT) {
+                /* Write with Unix syscalls, fprintf() cannot be used here. */
+                static const char warn_prefix[] = ": cannot join '";
+                static const char warn_suffix[] = "' namespace (unsupported by kernel)\n";
+                write (STDERR_FILENO, ubp_av[0], strlen (ubp_av[0]));
+                write (STDERR_FILENO, warn_prefix, LENGTH_OF (warn_prefix));
+                write (STDERR_FILENO, s_namespaces[i].name, strlen (s_namespaces[i].name));
+                write (STDERR_FILENO, warn_suffix, LENGTH_OF (warn_suffix));
+                continue;
+            }
             error_argv[1] = "cannot open";
             error_argv[2] = path;
             error_argv[3] = strerror (errno);
