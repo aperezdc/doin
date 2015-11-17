@@ -14,6 +14,12 @@ make
 
 # Now as "root":
 PID=$(docker inspect --format='{{.State.Pid}}' my-minimal-container)
+./doin $PID tree /
+```
+
+The latest line above is roughly equivalent to:
+
+```sh
 LD_PRELOAD=$(pwd)/doin.so __DOIN_ATTACH_PID=${PID} tree /
 ```
 

@@ -1,0 +1,25 @@
+#! /bin/sh
+set -e
+
+die () {
+	if [ -n "$1" ] ; then
+		echo "$0: $1" 1>&2
+	else
+		echo "Usage: $(basename "$0") PID command..." 1>&2
+	fi
+	exit 1
+}
+
+if ! [ "x${UID}" = "x0" ] ; then
+	if ! [ "x${EUID}" = "x0" ] ; then
+		die "You need to be 'root' to use this program"
+	fi
+fi
+[ -n "$1" ]  || die
+[ -n "$2" ]  || die
+kill -0 "$1" &> /dev/null || die "Invalid PID '$1'"
+
+export LD_PRELOAD="$(dirname "$0")/doin.so"
+export __DOIN_ATTACH_PID=$1
+shift
+exec "$@"
