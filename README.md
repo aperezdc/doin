@@ -14,6 +14,20 @@ PID=$(docker inspect --format='{{.State.Pid}}' my-minimal-container)
 LD_PRELOAD=$(pwd)/doin.so __DOIN_ATTACH_PID=${PID} tree /
 ```
 
+How does it work?
+=================
+
+The `doin.so` shared object is loaded by the dynamic linker before the rest of
+shared objects needed by the binary being executed — including the C library.
+The C library provides the
+[__libc_start_main](http://refspecs.linuxbase.org/LSB_3.1.1/LSB-Core-generic/LSB-Core-generic/baselib---libc-start-main-.html),
+which is called by the `_start` function of every program (which is where
+execution really starts, this code resides in `crt1.o` and is linked in every
+program) which `doin.so` overrides to arrange calls to
+[setns()](http://linux.die.net/man/2/setns) *before* calling the original
+`__libc_start_main` provided by the C library, which in turn will call the
+`main()` function in the program.
+
 
 License
 =======
