@@ -4,6 +4,14 @@ doin
 Executes *any* binary in *any* namespace-based Linux container.
 Without platform-dependant kludges.
 
+Tested and working with:
+
+* [LXC](https://linuxcontainers.org/)
+* [Docker](http://www.docker.com/)
+
+(If you test `doin` with other namespace-based container system working,
+please post a PR to update this `README` file!)
+
 
 Usage
 =====
